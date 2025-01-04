@@ -1,23 +1,18 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   useColorScheme,
+  useWindowDimensions,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-// import {GestureShaderCard} from './src/card/GestureShaderCard';
+import ShaderExample from './ShaderExample';
 
 function Playground(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const {width, height} = useWindowDimensions();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -32,7 +27,7 @@ function Playground(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        {/* <GestureShaderCard /> */}
+        <ShaderExample width={width} height={height} />
       </ScrollView>
     </SafeAreaView>
   );

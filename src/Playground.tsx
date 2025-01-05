@@ -9,7 +9,8 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 // import ShaderExample from './ShaderExample';
-import {LuffyExample} from './LuffyExample';
+// import {LuffyExample} from './LuffyExample';
+import {PokemonCard} from './PokemonCard';
 
 function Playground(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -29,7 +30,8 @@ function Playground(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         {/* <ShaderExample width={width} height={height} /> */}
-        <LuffyExample />
+        {/* <LuffyExample /> */}
+        <PokemonCard />
       </ScrollView>
     </SafeAreaView>
   );

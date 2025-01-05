@@ -38,3 +38,9 @@ Watch Glare Example video
 4) `src/PokemonCard.tsx`<br/> <br/>
 [![Watch PokemonCard video](https://img.youtube.com/vi/nDsZhQIkm5Q/maxresdefault.jpg)](https://www.youtube.com/shorts/nDsZhQIkm5Q)
 Watch PokemonCard video
+<br/> <br/>
+
+## Appreciation
+
+1) [An Introduction to Shader Art Coding](https://www.youtube.com/watch?v=f4s1h2YETNY&t=1216s) by [kishimisu](https://www.youtube.com/@kishimisu)
+2) [https://poke-holo.simey.me/](https://poke-holo.simey.me/) created by [simey](https://x.com/simeydotme)

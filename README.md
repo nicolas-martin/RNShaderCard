@@ -2,6 +2,8 @@
 
 This is a **react native** project, in which I'm tinkering with different shaders followed by trying to recreate <br/> <br/> [https://poke-holo.simey.me/](https://poke-holo.simey.me/) created by [simey](https://x.com/simeydotme) <br/> <br/>using **react-native-skia**.
 
+The details about this project is explained in [Shiny holographic cards in react native using Skia](https://medium.com/@jerinjohnk/shiny-holographic-cards-in-react-native-using-skia-81a334fa182d).
+
 ## Getting Started
 
 ```bash

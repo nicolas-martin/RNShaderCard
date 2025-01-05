@@ -42,5 +42,5 @@ Watch PokemonCard video
 
 ## Appreciation
 
-1) [An Introduction to Shader Art Coding](https://www.youtube.com/watch?v=f4s1h2YETNY&t=1216s) by [kishimisu](https://www.youtube.com/@kishimisu)
+1) [An Introduction to Shader Art Coding](https://www.youtube.com/watch?v=f4s1h2YETNY) by [kishimisu](https://www.youtube.com/@kishimisu)
 2) [https://poke-holo.simey.me/](https://poke-holo.simey.me/) created by [simey](https://x.com/simeydotme)

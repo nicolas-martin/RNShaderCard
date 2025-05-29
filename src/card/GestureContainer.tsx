@@ -7,6 +7,7 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 	useAnimatedReaction,
+	withSpring,
 } from 'react-native-reanimated';
 
 interface GestureContainerProps {
@@ -21,19 +22,23 @@ export function GestureContainer({
 	children,
 	width,
 	height,
-	maxAngle = 10, // Default value of 10
+	maxAngle = 6, // Reduced default for more subtle, realistic rotation
 	onRotationChange,
 }: GestureContainerProps) {
 	const rotateX = useSharedValue(0);
 	const rotateY = useSharedValue(0);
 
-	// Move interpolateRotation inside component to use maxAngle prop
+	// Improved interpolation for more realistic rotation based on distance from center
 	const interpolateRotation = React.useCallback(
 		(value: number, size: number, isReverse = false) => {
 			'worklet';
+			const center = size / 2;
+			const relativeValue = value - center;
+			const normalizedValue = relativeValue / center;
+			
 			return interpolate(
-				value,
-				[0, size],
+				normalizedValue,
+				[-1, 1],
 				isReverse ? [maxAngle, -maxAngle] : [-maxAngle, maxAngle],
 				Extrapolation.CLAMP,
 			);
@@ -52,22 +57,36 @@ export function GestureContainer({
 
 	const gesture = Gesture.Pan()
 		.onBegin(event => {
-			rotateX.value = withTiming(interpolateRotation(event.y, height, true));
-			rotateY.value = withTiming(interpolateRotation(event.x, width));
+			// Use spring animation for more natural feel
+			rotateX.value = withSpring(interpolateRotation(event.y, height, true), {
+				damping: 15,
+				stiffness: 150,
+			});
+			rotateY.value = withSpring(interpolateRotation(event.x, width), {
+				damping: 15,
+				stiffness: 150,
+			});
 		})
 		.onUpdate(event => {
 			rotateX.value = interpolateRotation(event.y, height, true);
 			rotateY.value = interpolateRotation(event.x, width);
 		})
 		.onFinalize(() => {
-			rotateX.value = withTiming(0);
-			rotateY.value = withTiming(0);
+			// Smooth return to center with spring animation
+			rotateX.value = withSpring(0, {
+				damping: 20,
+				stiffness: 100,
+			});
+			rotateY.value = withSpring(0, {
+				damping: 20,
+				stiffness: 100,
+			});
 		});
 
 	const rStyle = useAnimatedStyle(
 		() => ({
 			transform: [
-				{ perspective: 300 },
+				{ perspective: 1000 }, // Increased perspective for more realistic 3D effect
 				{ rotateX: `${rotateX.value}deg` },
 				{ rotateY: `${rotateY.value}deg` },
 			],

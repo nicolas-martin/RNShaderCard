@@ -74,8 +74,9 @@ function Playground(): React.JSX.Element {
 				{activeComponent === 'shader' && <ShaderExample width={width} height={height} />}
 				{activeComponent === 'luffy' && <LuffyExample />}
 				{activeComponent === 'pokemon' && (
-					<PokemonCard 
-						imageUrl="https://trumpwhitehouse.archives.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-620x620.jpg"
+					<PokemonCard
+						imageUrl="https://ipfs.io/ipfs/QmWxapmp4HA1bMSQqF53ubhnVB6CXwWPaiTax2GnAnGDaj"
+					// imageUrl="https://trumpwhitehouse.archives.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-620x620.jpg"
 					/>
 				)}
 			</ScrollView>

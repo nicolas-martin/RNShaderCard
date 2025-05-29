@@ -8,6 +8,8 @@ import {
 	LinearGradient,
 	Group,
 	RoundedRect,
+	Circle,
+	Mask,
 } from '@shopify/react-native-skia';
 
 interface ImageCanvasProps {
@@ -22,7 +24,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl }: ImageCa
 	const maskedWildCharge = useImage(
 		require('../../assets/masked_wild_charge.webp'),
 	);
-	
+
 	// Use custom image if provided, otherwise fall back to default Pokemon images
 	const customImage = useImage(imageUrl || null);
 
@@ -34,11 +36,16 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl }: ImageCa
 		return null;
 	}
 
+	// Calculate circle dimensions - use the smaller dimension to ensure it fits
+	const circleRadius = Math.min(width, height) / 2;
+	const centerX = width / 2;
+	const centerY = height / 2;
+
 	function glareShinyLayer() {
 		return (
 			<Group blendMode={'overlay'}>
 				{/* Combined effect using a gradient */}
-				<RoundedRect x={0} y={0} r={17} width={width} height={height}>
+				<Circle cx={centerX} cy={centerY} r={circleRadius}>
 					<LinearGradient
 						start={{ x: 0, y: 0 }}
 						end={{ x: width, y: height }}
@@ -48,13 +55,11 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl }: ImageCa
 							'rgba(128, 128, 128, 0.2)', // Simulates saturation
 						]}
 					/>
-				</RoundedRect>
-				<RoundedRect
-					x={0}
-					y={0}
-					width={width}
-					r={17}
-					height={height}
+				</Circle>
+				<Circle
+					cx={centerX}
+					cy={centerY}
+					r={circleRadius}
 					color="white">
 					<RadialGradient
 						c={vec(gradientCenter.x, gradientCenter.y)}
@@ -66,24 +71,31 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl }: ImageCa
 						]}
 						positions={[0.1, 0.2, 0.9]}
 					/>
-				</RoundedRect>
+				</Circle>
 			</Group>
 		);
 	}
 
 	return (
 		<Canvas style={{ width, height }}>
-			<Image image={primaryImage} height={height} width={width} fit="cover" />
-			{overlayImage && (
-				<Image
-					image={overlayImage}
-					height={height}
-					width={width}
-					fit="cover"
-					opacity={0.8}
-					blendMode="overlay"
-				/>
-			)}
+			<Mask
+				mask={
+					<Group>
+						<Circle cx={centerX} cy={centerY} r={circleRadius} color="white" />
+					</Group>
+				}>
+				<Image image={primaryImage} height={height} width={width} fit="cover" />
+				{overlayImage && (
+					<Image
+						image={overlayImage}
+						height={height}
+						width={width}
+						fit="cover"
+						opacity={0.8}
+						blendMode="overlay"
+					/>
+				)}
+			</Mask>
 			{glareShinyLayer()}
 		</Canvas>
 	);

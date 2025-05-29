@@ -10,9 +10,9 @@ interface PokemonCardProps {
 	maxWidth?: number;
 }
 
-export function PokemonCard({ 
-	imageUrl = 'https://trumpwhitehouse.archives.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-620x620.jpg',
-	maxWidth 
+export function PokemonCard({
+	imageUrl,
+	maxWidth
 }: PokemonCardProps) {
 	const { width: SCREEN_WIDTH, height } = useWindowDimensions();
 	const [imageDimensions, setImageDimensions] = React.useState<{
@@ -50,7 +50,7 @@ export function PokemonCard({
 
 		const aspectRatio = imageDimensions.width / imageDimensions.height;
 		const maxCardWidth = maxWidth || SCREEN_WIDTH * 0.9;
-		
+
 		let WIDTH = maxCardWidth;
 		let HEIGHT = WIDTH / aspectRatio;
 

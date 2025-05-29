@@ -14,15 +14,23 @@ interface ImageCanvasProps {
 	width: number;
 	height: number;
 	gradientCenter: { x: number; y: number };
+	imageUrl?: string;
 }
 
-export function ImageCanvas({ width, height, gradientCenter }: ImageCanvasProps) {
+export function ImageCanvas({ width, height, gradientCenter, imageUrl }: ImageCanvasProps) {
 	const wildCharge = useImage(require('../../assets/wild_charge.png'));
 	const maskedWildCharge = useImage(
 		require('../../assets/masked_wild_charge.webp'),
 	);
+	
+	// Use custom image if provided, otherwise fall back to default Pokemon images
+	const customImage = useImage(imageUrl || null);
 
-	if (!wildCharge && !maskedWildCharge) {
+	// Determine which image to use
+	const primaryImage = customImage || wildCharge;
+	const overlayImage = customImage ? null : maskedWildCharge;
+
+	if (!primaryImage) {
 		return null;
 	}
 
@@ -65,15 +73,17 @@ export function ImageCanvas({ width, height, gradientCenter }: ImageCanvasProps)
 
 	return (
 		<Canvas style={{ width, height }}>
-			<Image image={wildCharge} height={height} width={width} fit="cover" />
-			<Image
-				image={maskedWildCharge}
-				height={height}
-				width={width}
-				fit="cover"
-				opacity={0.8}
-				blendMode="overlay"
-			/>
+			<Image image={primaryImage} height={height} width={width} fit="cover" />
+			{overlayImage && (
+				<Image
+					image={overlayImage}
+					height={height}
+					width={width}
+					fit="cover"
+					opacity={0.8}
+					blendMode="overlay"
+				/>
+			)}
 			{glareShinyLayer()}
 		</Canvas>
 	);

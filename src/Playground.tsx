@@ -73,7 +73,11 @@ function Playground(): React.JSX.Element {
 				{/* Conditional Rendering */}
 				{activeComponent === 'shader' && <ShaderExample width={width} height={height} />}
 				{activeComponent === 'luffy' && <LuffyExample />}
-				{activeComponent === 'pokemon' && <PokemonCard />}
+				{activeComponent === 'pokemon' && (
+					<PokemonCard 
+						imageUrl="https://trumpwhitehouse.archives.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-620x620.jpg"
+					/>
+				)}
 			</ScrollView>
 		</SafeAreaView>
 	);

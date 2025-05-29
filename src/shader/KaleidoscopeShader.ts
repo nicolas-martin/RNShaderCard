@@ -34,4 +34,4 @@ half4 main(vec2 fragCoord) {
     return vec4(finalColor, 1.0);
 }`;
 
-export {KaleidoscopeShader};
+export { KaleidoscopeShader };

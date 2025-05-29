@@ -14,7 +14,7 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ShaderExample from './ShaderExample';
 import { PokemonCard } from './PokemonCard';
-import {LuffyExample} from './LuffyExample';
+import { LuffyExample } from './LuffyExample';
 
 function Playground(): React.JSX.Element {
 	const isDarkMode = useColorScheme() === 'dark';
@@ -38,11 +38,11 @@ function Playground(): React.JSX.Element {
 			<ScrollView
 				contentInsetAdjustmentBehavior="automatic"
 				style={backgroundStyle}>
-				
+
 				{/* Toggle Controls */}
 				<View style={styles.toggleContainer}>
 					<Text style={[styles.title, { color: textColor }]}>Toggles</Text>
-					
+
 					<View style={styles.buttonRow}>
 						<TouchableOpacity
 							style={[styles.toggleButton, activeComponent === 'shader' && styles.activeButton]}

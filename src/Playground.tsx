@@ -30,6 +30,7 @@ type BaseComponent = 'pokemon-card' | 'shader-canvas' | 'luffy-canvas';
 type ShaderEffect = 'none' | 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'shiny' | 'all';
 type DisplayMode = 'circular' | 'original' | 'fullscreen';
 type ShaderType = 'kaleidoscope' | 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'example';
+type ImageOption = 'pokemon-card' | 'trump' | 'wild-charge';
 
 interface DropdownOption {
 	label: string;
@@ -144,6 +145,7 @@ function Playground(): React.JSX.Element {
 	const [shaderEffect, setShaderEffect] = useState<ShaderEffect>('shiny');
 	const [displayMode, setDisplayMode] = useState<DisplayMode>('circular');
 	const [shaderType, setShaderType] = useState<ShaderType>('kaleidoscope');
+	const [selectedImage, setSelectedImage] = useState<ImageOption>('pokemon-card');
 
 	const backgroundStyle = {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -182,6 +184,25 @@ function Playground(): React.JSX.Element {
 		{ label: '🥇 Metallic Shader', value: 'metallic' },
 		{ label: '🎨 Example Demo', value: 'example' },
 	];
+
+	const imageOptions: DropdownOption[] = [
+		{ label: '🃏 Pokemon Card', value: 'pokemon-card' },
+		{ label: '🇺🇸 Trump Photo', value: 'trump' },
+		{ label: '⚡ Wild Charge (Original)', value: 'wild-charge' },
+	];
+
+	const getImageUrl = (imageOption: ImageOption): string | undefined => {
+		switch (imageOption) {
+			case 'pokemon-card':
+				return "https://ipfs.io/ipfs/QmWxapmp4HA1bMSQqF53ubhnVB6CXwWPaiTax2GnAnGDaj";
+			case 'trump':
+				return "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Donald_Trump_August_19%2C_2015_%28cropped%29.jpg/1200px-Donald_Trump_August_19%2C_2015_%28cropped%29.jpg";
+			case 'wild-charge':
+				return undefined; // This will use the default wild_charge.png with mask
+			default:
+				return undefined;
+		}
+	};
 
 	const renderSelectedComponent = () => {
 		// Handle Luffy canvas separately
@@ -231,9 +252,12 @@ function Playground(): React.JSX.Element {
 			// Determine mask shape based on display mode
 			const useCircularMask = displayMode !== 'original';
 
+			// Get the image URL based on selection
+			const imageUrl = getImageUrl(selectedImage);
+
 			return (
 				<PokemonCard
-					imageUrl="https://ipfs.io/ipfs/QmWxapmp4HA1bMSQqF53ubhnVB6CXwWPaiTax2GnAnGDaj"
+					imageUrl={imageUrl}
 					shaderType={pokemonShaderType}
 					maxWidth={displayMode === 'fullscreen' ? width : width * 0.9}
 					useCircularMask={useCircularMask}
@@ -273,6 +297,15 @@ function Playground(): React.JSX.Element {
 
 					{baseComponent === 'pokemon-card' && (
 						<>
+							<CustomDropdown
+								title="Image Selection"
+								options={imageOptions}
+								selectedValue={selectedImage}
+								onSelect={(value) => setSelectedImage(value as ImageOption)}
+								isDarkMode={isDarkMode}
+								textColor={textColor}
+							/>
+
 							<CustomDropdown
 								title="Shader Effect"
 								options={shaderEffectOptions}
@@ -319,7 +352,7 @@ function Playground(): React.JSX.Element {
 				{/* Render Selected Component */}
 				<View style={styles.debugContainer}>
 					<Text style={[styles.debugText, { color: textColor }]}>
-						Current: {baseComponent} | {baseComponent === 'pokemon-card' ? `${shaderEffect} + ${displayMode}` : baseComponent === 'shader-canvas' ? `${shaderType} + ${displayMode}` : 'animation'}
+						Current: {baseComponent} | {baseComponent === 'pokemon-card' ? `${selectedImage} + ${shaderEffect} + ${displayMode}` : baseComponent === 'shader-canvas' ? `${shaderType} + ${displayMode}` : 'animation'}
 					</Text>
 				</View>
 				{renderSelectedComponent()}

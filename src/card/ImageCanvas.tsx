@@ -24,10 +24,10 @@ interface ImageCanvasProps {
 	height: number;
 	gradientCenter: { x: number; y: number };
 	imageUrl?: string;
-	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all'; // Updated shader type options
+	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny'; // Updated shader type options
 }
 
-export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderType = 'sparkle' }: ImageCanvasProps) {
+export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderType }: ImageCanvasProps) {
 	const [time, setTime] = React.useState(0);
 	const requestRef = React.useRef<number>();
 
@@ -122,7 +122,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	function shaderSparkleLayer() {
 		if (!sparkleShaderEffect) return null;
-		
+
 		return (
 			<Group blendMode={'overlay'}>
 				<Circle cx={centerX} cy={centerY} r={circleRadius}>
@@ -141,7 +141,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	function shaderGlowLayer() {
 		if (!glowShaderEffect) return null;
-		
+
 		return (
 			<Group blendMode={'screen'}>
 				<Circle cx={centerX} cy={centerY} r={circleRadius}>
@@ -163,7 +163,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	function shaderBloomGlowLayer() {
 		if (!bloomGlowShaderEffect) return null;
-		
+
 		return (
 			<Group blendMode={'screen'}>
 				<Circle cx={centerX} cy={centerY} r={circleRadius}>
@@ -185,7 +185,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	function shaderMetallicLayer() {
 		if (!metallicShaderEffect) return null;
-		
+
 		return (
 			<Group blendMode={'overlay'}>
 				<Circle cx={centerX} cy={centerY} r={circleRadius}>
@@ -226,7 +226,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 					/>
 				)}
 			</Mask>
-			{/* {glareShinyLayer()} */}
+			{(shaderType === "shiny") && glareShinyLayer()}
 			{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && shaderSparkleLayer()}
 			{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && shaderGlowLayer()}
 			{(shaderType === 'bloom' || shaderType === 'all') && shaderBloomGlowLayer()}

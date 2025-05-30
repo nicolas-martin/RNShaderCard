@@ -24,10 +24,11 @@ interface ImageCanvasProps {
 	height: number;
 	gradientCenter: { x: number; y: number };
 	imageUrl?: string;
-	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original';
+	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original' | 'none';
+	useCircularMask?: boolean;
 }
 
-export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderType }: ImageCanvasProps) {
+export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderType, useCircularMask }: ImageCanvasProps) {
 	const [time, setTime] = React.useState(0);
 	const requestRef = React.useRef<number>();
 
@@ -208,14 +209,117 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	return (
 		<Canvas style={{ width, height }}>
-			{shaderType === 'original' ? (
-				// Original version without mask - shows full rectangular card
+			{useCircularMask === false ? (
+				// Rectangular version - shows full rectangular image with optional shader effects
 				<>
 					<Image image={primaryImage} height={height} width={width} fit="cover" />
-					{glareShinyLayer()}
+					{overlayImage && (
+						<Image
+							image={overlayImage}
+							height={height}
+							width={width}
+							fit="cover"
+							opacity={0.8}
+							blendMode="overlay"
+						/>
+					)}
+					{/* Apply shader effects to rectangular image */}
+					{(shaderType === "shiny") && (
+						<Group blendMode={'overlay'}>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
+								<LinearGradient
+									start={{ x: 0, y: 0 }}
+									end={{ x: width, y: height }}
+									colors={[
+										'rgba(255, 255, 255, 0.15)',
+										'rgba(0, 0, 0, 0.25)',
+										'rgba(128, 128, 128, 0.2)',
+									]}
+								/>
+							</RoundedRect>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12} color="white">
+								<RadialGradient
+									c={vec(gradientCenter.x, gradientCenter.y)}
+									r={Math.max(width, height)}
+									colors={[
+										'hsla(0, 0%, 100%, 0.8)',
+										'hsla(0, 0%, 100%, 0.65)',
+										'hsla(0, 0%, 0%, 0.5)',
+									]}
+									positions={[0.1, 0.2, 0.9]}
+								/>
+							</RoundedRect>
+						</Group>
+					)}
+					{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && sparkleShaderEffect && (
+						<Group blendMode={'overlay'}>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
+								<Shader
+									source={sparkleShaderEffect}
+									uniforms={{
+										iTime: time,
+										iResolution: [width, height],
+										gradientCenter: [gradientCenter.x, gradientCenter.y],
+									}}
+								/>
+							</RoundedRect>
+						</Group>
+					)}
+					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && glowShaderEffect && (
+						<Group blendMode={'screen'}>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
+								<Shader
+									source={glowShaderEffect}
+									uniforms={{
+										iTime: time,
+										iResolution: [width, height],
+										gradientCenter: [gradientCenter.x, gradientCenter.y],
+										glowIntensity: 0.8,
+										glowRadius: 0.3,
+										glowColor: [1.0, 0.9, 0.65],
+									}}
+								/>
+							</RoundedRect>
+						</Group>
+					)}
+					{(shaderType === 'bloom' || shaderType === 'all') && bloomGlowShaderEffect && (
+						<Group blendMode={'screen'}>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
+								<Shader
+									source={bloomGlowShaderEffect}
+									uniforms={{
+										iTime: time,
+										iResolution: [width, height],
+										gradientCenter: [gradientCenter.x, gradientCenter.y],
+										samples: 5.0,
+										quality: 2.0,
+										intensity: 0.7,
+									}}
+								/>
+							</RoundedRect>
+						</Group>
+					)}
+					{(shaderType === 'metallic' || shaderType === 'all') && metallicShaderEffect && (
+						<Group blendMode={'overlay'}>
+							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
+								<Shader
+									source={metallicShaderEffect}
+									uniforms={{
+										iTime: time,
+										iResolution: [width, height],
+										gradientCenter: [gradientCenter.x, gradientCenter.y],
+										metallic: 0.9,
+										roughness: 0.1,
+										baseColor: [1.0, 0.8, 0.3],
+										lightColor: [1.0, 0.95, 0.8],
+									}}
+								/>
+							</RoundedRect>
+						</Group>
+					)}
 				</>
 			) : (
-				// All other versions with circular mask
+				// Circular version with mask
 				<>
 					<Mask
 						mask={
@@ -240,6 +344,7 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && shaderGlowLayer()}
 					{(shaderType === 'bloom' || shaderType === 'all') && shaderBloomGlowLayer()}
 					{(shaderType === 'metallic' || shaderType === 'all') && shaderMetallicLayer()}
+					{/* 'none' shader type shows circular mask but no effects */}
 				</>
 			)}
 		</Canvas>

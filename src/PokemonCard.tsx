@@ -8,13 +8,15 @@ import { ImageCanvas } from './card/ImageCanvas';
 interface PokemonCardProps {
 	imageUrl?: string;
 	maxWidth?: number;
-	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original';
+	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original' | 'none';
+	useCircularMask?: boolean;
 }
 
 export function PokemonCard({
 	imageUrl,
 	maxWidth,
-	shaderType = 'shiny'
+	shaderType = 'shiny',
+	useCircularMask = true
 }: PokemonCardProps) {
 	const { width: SCREEN_WIDTH, height } = useWindowDimensions();
 	const [imageDimensions, setImageDimensions] = React.useState<{
@@ -113,6 +115,7 @@ export function PokemonCard({
 					gradientCenter={gradientCenter}
 					imageUrl={imageUrl}
 					shaderType={shaderType}
+					useCircularMask={useCircularMask}
 				/>
 			</GestureContainer>
 		</View>

@@ -100,18 +100,19 @@ export function PokemonCard({
 					height,
 				},
 			]}>
-			<GestureContainer
+			{/* <GestureContainer
 				width={WIDTH}
 				height={HEIGHT}
 				maxAngle={MAX_ANGLE}
-				onRotationChange={handleRotationChange}>
+				onRotationChange={handleRotationChange}> */}
 				<ImageCanvas
 					width={WIDTH}
 					height={HEIGHT}
 					gradientCenter={gradientCenter}
 					imageUrl={imageUrl}
+					shaderType='metallic'
 				/>
-			</GestureContainer>
+			{/* </GestureContainer> */}
 		</View>
 	);
 }

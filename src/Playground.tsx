@@ -17,12 +17,14 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ShaderExample from './ShaderExample';
 import { PokemonCard } from './PokemonCard';
 import { LuffyExample } from './LuffyExample';
-import ShaderContainer from './shader/ShaderContainer';
-import { KaleidoscopeShader } from './shader/KaleidoscopeShader';
-import { SparkleShader } from './shader/SparkleShader';
-import { GlowShader } from './shader/GlowShader';
-import { BloomGlowShader } from './shader/BloomGlowShader';
-import { MetallicShader } from './shader/MetallicShader';
+import {
+	ShaderContainer,
+	KaleidoscopeShader,
+	SparkleShader,
+	GlowShader,
+	BloomGlowShader,
+	MetallicShader,
+} from './shader';
 
 type BaseComponent = 'pokemon-card' | 'shader-canvas' | 'luffy-canvas';
 type ShaderEffect = 'none' | 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'shiny' | 'all';

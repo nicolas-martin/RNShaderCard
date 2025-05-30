@@ -14,10 +14,17 @@ import {
 	Skia,
 	Fill,
 } from '@shopify/react-native-skia';
-import { SparkleShader } from '../shader/SparkleShader';
-import { GlowShader } from '../shader/GlowShader';
-import { BloomGlowShader } from '../shader/BloomGlowShader';
-import { MetallicShader } from '../shader/MetallicShader';
+import {
+	SparkleShader,
+	GlowShader,
+	BloomGlowShader,
+	MetallicShader,
+	SparkleShaderComponent,
+	GlowShaderComponent,
+	BloomShaderComponent,
+	MetallicShaderComponent,
+	ShinyShaderComponent,
+} from '../shader';
 
 interface ImageCanvasProps {
 	width: number;
@@ -86,126 +93,15 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 	const centerX = width / 2;
 	const centerY = height / 2;
 
-	function glareShinyLayer() {
-		return (
-			<Group blendMode={'overlay'}>
-				{/* Combined effect using a gradient */}
-				<Circle cx={centerX} cy={centerY} r={circleRadius}>
-					<LinearGradient
-						start={{ x: 0, y: 0 }}
-						end={{ x: width, y: height }}
-						colors={[
-							'rgba(255, 255, 255, 0.15)', // Simulates brightness
-							'rgba(0, 0, 0, 0.25)', // Simulates contrast
-							'rgba(128, 128, 128, 0.2)', // Simulates saturation
-						]}
-					/>
-				</Circle>
-				<Circle
-					cx={centerX}
-					cy={centerY}
-					r={circleRadius}
-					color="white">
-					<RadialGradient
-						c={vec(gradientCenter.x, gradientCenter.y)}
-						r={Math.max(width, height)}
-						colors={[
-							'hsla(0, 0%, 100%, 0.8)',
-							'hsla(0, 0%, 100%, 0.65)',
-							'hsla(0, 0%, 0%, 0.5)',
-						]}
-						positions={[0.1, 0.2, 0.9]}
-					/>
-				</Circle>
-			</Group>
-		);
-	}
-
-	function shaderSparkleLayer() {
-		if (!sparkleShaderEffect) return null;
-
-		return (
-			<Group blendMode={'overlay'}>
-				<Circle cx={centerX} cy={centerY} r={circleRadius}>
-					<Shader
-						source={sparkleShaderEffect}
-						uniforms={{
-							iTime: time,
-							iResolution: [width, height],
-							gradientCenter: [gradientCenter.x, gradientCenter.y],
-						}}
-					/>
-				</Circle>
-			</Group>
-		);
-	}
-
-	function shaderGlowLayer() {
-		if (!glowShaderEffect) return null;
-
-		return (
-			<Group blendMode={'screen'}>
-				<Circle cx={centerX} cy={centerY} r={circleRadius}>
-					<Shader
-						source={glowShaderEffect}
-						uniforms={{
-							iTime: time,
-							iResolution: [width, height],
-							gradientCenter: [gradientCenter.x, gradientCenter.y],
-							glowIntensity: 0.8,
-							glowRadius: 0.3,
-							glowColor: [1.0, 0.9, 0.65],
-						}}
-					/>
-				</Circle>
-			</Group>
-		);
-	}
-
-	function shaderBloomGlowLayer() {
-		if (!bloomGlowShaderEffect) return null;
-
-		return (
-			<Group blendMode={'screen'}>
-				<Circle cx={centerX} cy={centerY} r={circleRadius}>
-					<Shader
-						source={bloomGlowShaderEffect}
-						uniforms={{
-							iTime: time,
-							iResolution: [width, height],
-							gradientCenter: [gradientCenter.x, gradientCenter.y],
-							samples: 5.0,
-							quality: 2.0,
-							intensity: 0.7,
-						}}
-					/>
-				</Circle>
-			</Group>
-		);
-	}
-
-	function shaderMetallicLayer() {
-		if (!metallicShaderEffect) return null;
-
-		return (
-			<Group blendMode={'overlay'}>
-				<Circle cx={centerX} cy={centerY} r={circleRadius}>
-					<Shader
-						source={metallicShaderEffect}
-						uniforms={{
-							iTime: time,
-							iResolution: [width, height],
-							gradientCenter: [gradientCenter.x, gradientCenter.y],
-							metallic: 0.9,
-							roughness: 0.1,
-							baseColor: [1.0, 0.8, 0.3], // Gold color
-							lightColor: [1.0, 0.95, 0.8], // Warm light
-						}}
-					/>
-				</Circle>
-			</Group>
-		);
-	}
+	const shaderProps = {
+		time,
+		width,
+		height,
+		gradientCenter,
+		centerX,
+		centerY,
+		circleRadius,
+	};
 
 	return (
 		<Canvas style={{ width, height }}>
@@ -225,97 +121,35 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 					)}
 					{/* Apply shader effects to rectangular image */}
 					{(shaderType === "shiny") && (
-						<Group blendMode={'overlay'}>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
-								<LinearGradient
-									start={{ x: 0, y: 0 }}
-									end={{ x: width, y: height }}
-									colors={[
-										'rgba(255, 255, 255, 0.15)',
-										'rgba(0, 0, 0, 0.25)',
-										'rgba(128, 128, 128, 0.2)',
-									]}
-								/>
-							</RoundedRect>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12} color="white">
-								<RadialGradient
-									c={vec(gradientCenter.x, gradientCenter.y)}
-									r={Math.max(width, height)}
-									colors={[
-										'hsla(0, 0%, 100%, 0.8)',
-										'hsla(0, 0%, 100%, 0.65)',
-										'hsla(0, 0%, 0%, 0.5)',
-									]}
-									positions={[0.1, 0.2, 0.9]}
-								/>
-							</RoundedRect>
-						</Group>
+						<ShinyShaderComponent {...shaderProps} isCircular={false} />
 					)}
 					{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && sparkleShaderEffect && (
-						<Group blendMode={'overlay'}>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
-								<Shader
-									source={sparkleShaderEffect}
-									uniforms={{
-										iTime: time,
-										iResolution: [width, height],
-										gradientCenter: [gradientCenter.x, gradientCenter.y],
-									}}
-								/>
-							</RoundedRect>
-						</Group>
+						<SparkleShaderComponent 
+							{...shaderProps} 
+							sparkleShaderEffect={sparkleShaderEffect} 
+							isCircular={false} 
+						/>
 					)}
 					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && glowShaderEffect && (
-						<Group blendMode={'screen'}>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
-								<Shader
-									source={glowShaderEffect}
-									uniforms={{
-										iTime: time,
-										iResolution: [width, height],
-										gradientCenter: [gradientCenter.x, gradientCenter.y],
-										glowIntensity: 0.8,
-										glowRadius: 0.3,
-										glowColor: [1.0, 0.9, 0.65],
-									}}
-								/>
-							</RoundedRect>
-						</Group>
+						<GlowShaderComponent 
+							{...shaderProps} 
+							glowShaderEffect={glowShaderEffect} 
+							isCircular={false} 
+						/>
 					)}
 					{(shaderType === 'bloom' || shaderType === 'all') && bloomGlowShaderEffect && (
-						<Group blendMode={'screen'}>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
-								<Shader
-									source={bloomGlowShaderEffect}
-									uniforms={{
-										iTime: time,
-										iResolution: [width, height],
-										gradientCenter: [gradientCenter.x, gradientCenter.y],
-										samples: 5.0,
-										quality: 2.0,
-										intensity: 0.7,
-									}}
-								/>
-							</RoundedRect>
-						</Group>
+						<BloomShaderComponent 
+							{...shaderProps} 
+							bloomGlowShaderEffect={bloomGlowShaderEffect} 
+							isCircular={false} 
+						/>
 					)}
 					{(shaderType === 'metallic' || shaderType === 'all') && metallicShaderEffect && (
-						<Group blendMode={'overlay'}>
-							<RoundedRect x={0} y={0} width={width} height={height} r={12}>
-								<Shader
-									source={metallicShaderEffect}
-									uniforms={{
-										iTime: time,
-										iResolution: [width, height],
-										gradientCenter: [gradientCenter.x, gradientCenter.y],
-										metallic: 0.9,
-										roughness: 0.1,
-										baseColor: [1.0, 0.8, 0.3],
-										lightColor: [1.0, 0.95, 0.8],
-									}}
-								/>
-							</RoundedRect>
-						</Group>
+						<MetallicShaderComponent 
+							{...shaderProps} 
+							metallicShaderEffect={metallicShaderEffect} 
+							isCircular={false} 
+						/>
 					)}
 				</>
 			) : (
@@ -339,11 +173,37 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 							/>
 						)}
 					</Mask>
-					{(shaderType === "shiny") && glareShinyLayer()}
-					{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && shaderSparkleLayer()}
-					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && shaderGlowLayer()}
-					{(shaderType === 'bloom' || shaderType === 'all') && shaderBloomGlowLayer()}
-					{(shaderType === 'metallic' || shaderType === 'all') && shaderMetallicLayer()}
+					{(shaderType === "shiny") && (
+						<ShinyShaderComponent {...shaderProps} isCircular={true} />
+					)}
+					{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && sparkleShaderEffect && (
+						<SparkleShaderComponent 
+							{...shaderProps} 
+							sparkleShaderEffect={sparkleShaderEffect} 
+							isCircular={true} 
+						/>
+					)}
+					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && glowShaderEffect && (
+						<GlowShaderComponent 
+							{...shaderProps} 
+							glowShaderEffect={glowShaderEffect} 
+							isCircular={true} 
+						/>
+					)}
+					{(shaderType === 'bloom' || shaderType === 'all') && bloomGlowShaderEffect && (
+						<BloomShaderComponent 
+							{...shaderProps} 
+							bloomGlowShaderEffect={bloomGlowShaderEffect} 
+							isCircular={true} 
+						/>
+					)}
+					{(shaderType === 'metallic' || shaderType === 'all') && metallicShaderEffect && (
+						<MetallicShaderComponent 
+							{...shaderProps} 
+							metallicShaderEffect={metallicShaderEffect} 
+							isCircular={true} 
+						/>
+					)}
 					{/* 'none' shader type shows circular mask but no effects */}
 				</>
 			)}

@@ -21,7 +21,7 @@ function Playground(): React.JSX.Element {
 	const { width, height } = useWindowDimensions();
 
 	// Toggle states for each component
-	const [activeComponent, setActiveComponent] = useState<'shader' | 'luffy' | 'pokemon' | null>('shader');
+	const [activeComponent, setActiveComponent] = useState<'shader' | 'luffy' | 'pokemon' | 'original' | null>('shader');
 
 	const backgroundStyle = {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -67,6 +67,14 @@ function Playground(): React.JSX.Element {
 								Pokemon {activeComponent === 'pokemon' ? '✓' : '○'}
 							</Text>
 						</TouchableOpacity>
+
+						<TouchableOpacity
+							style={[styles.toggleButton, activeComponent === 'original' && styles.activeButton]}
+							onPress={() => setActiveComponent('original')}>
+							<Text style={[styles.buttonText, activeComponent === 'original' && styles.activeButtonText]}>
+								Original {activeComponent === 'original' ? '✓' : '○'}
+							</Text>
+						</TouchableOpacity>
 					</View>
 				</View>
 
@@ -79,6 +87,11 @@ function Playground(): React.JSX.Element {
 					// imageUrl="https://trumpwhitehouse.archives.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-620x620.jpg"
 					/>
 				)}
+				{activeComponent === 'original' && (
+					<PokemonCard
+						shaderType="original"
+					/>
+				)}
 			</ScrollView>
 		</SafeAreaView>
 	);
@@ -86,13 +99,13 @@ function Playground(): React.JSX.Element {
 
 const styles = StyleSheet.create({
 	toggleContainer: {
-		padding: 15,
-		paddingBottom: 10,
+		padding: 4,
+		paddingBottom: 2,
 	},
 	title: {
 		fontSize: 14,
 		fontWeight: 'bold',
-		marginBottom: 8,
+		marginBottom: 4,
 	},
 	toggleButton: {
 		flex: 1,

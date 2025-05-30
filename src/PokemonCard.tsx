@@ -8,11 +8,13 @@ import { ImageCanvas } from './card/ImageCanvas';
 interface PokemonCardProps {
 	imageUrl?: string;
 	maxWidth?: number;
+	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original';
 }
 
 export function PokemonCard({
 	imageUrl,
-	maxWidth
+	maxWidth,
+	shaderType = 'shiny'
 }: PokemonCardProps) {
 	const { width: SCREEN_WIDTH, height } = useWindowDimensions();
 	const [imageDimensions, setImageDimensions] = React.useState<{
@@ -110,7 +112,7 @@ export function PokemonCard({
 					height={HEIGHT}
 					gradientCenter={gradientCenter}
 					imageUrl={imageUrl}
-					shaderType='shiny'
+					shaderType={shaderType}
 				/>
 			</GestureContainer>
 		</View>
@@ -119,8 +121,8 @@ export function PokemonCard({
 
 const styles = StyleSheet.create({
 	centeredView: {
-		flex: 1,
-		justifyContent: 'center',
+		justifyContent: 'flex-start',
 		alignItems: 'center',
+		paddingTop: 10,
 	},
 });

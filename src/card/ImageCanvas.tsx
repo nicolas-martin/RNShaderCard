@@ -24,7 +24,7 @@ interface ImageCanvasProps {
 	height: number;
 	gradientCenter: { x: number; y: number };
 	imageUrl?: string;
-	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny'; // Updated shader type options
+	shaderType?: 'sparkle' | 'glow' | 'bloom' | 'metallic' | 'both' | 'all' | 'shiny' | 'original';
 }
 
 export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderType }: ImageCanvasProps) {
@@ -208,29 +208,40 @@ export function ImageCanvas({ width, height, gradientCenter, imageUrl, shaderTyp
 
 	return (
 		<Canvas style={{ width, height }}>
-			<Mask
-				mask={
-					<Group>
-						<Circle cx={centerX} cy={centerY} r={circleRadius} color="white" />
-					</Group>
-				}>
-				<Image image={primaryImage} height={height} width={width} fit="cover" />
-				{overlayImage && (
-					<Image
-						image={overlayImage}
-						height={height}
-						width={width}
-						fit="cover"
-						opacity={0.8}
-						blendMode="overlay"
-					/>
-				)}
-			</Mask>
-			{(shaderType === "shiny") && glareShinyLayer()}
-			{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && shaderSparkleLayer()}
-			{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && shaderGlowLayer()}
-			{(shaderType === 'bloom' || shaderType === 'all') && shaderBloomGlowLayer()}
-			{(shaderType === 'metallic' || shaderType === 'all') && shaderMetallicLayer()}
+			{shaderType === 'original' ? (
+				// Original version without mask - shows full rectangular card
+				<>
+					<Image image={primaryImage} height={height} width={width} fit="cover" />
+					{glareShinyLayer()}
+				</>
+			) : (
+				// All other versions with circular mask
+				<>
+					<Mask
+						mask={
+							<Group>
+								<Circle cx={centerX} cy={centerY} r={circleRadius} color="white" />
+							</Group>
+						}>
+						<Image image={primaryImage} height={height} width={width} fit="cover" />
+						{overlayImage && (
+							<Image
+								image={overlayImage}
+								height={height}
+								width={width}
+								fit="cover"
+								opacity={0.8}
+								blendMode="overlay"
+							/>
+						)}
+					</Mask>
+					{(shaderType === "shiny") && glareShinyLayer()}
+					{(shaderType === 'sparkle' || shaderType === 'both' || shaderType === 'all') && shaderSparkleLayer()}
+					{(shaderType === 'glow' || shaderType === 'both' || shaderType === 'all') && shaderGlowLayer()}
+					{(shaderType === 'bloom' || shaderType === 'all') && shaderBloomGlowLayer()}
+					{(shaderType === 'metallic' || shaderType === 'all') && shaderMetallicLayer()}
+				</>
+			)}
 		</Canvas>
 	);
 }

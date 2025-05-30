@@ -79,12 +79,60 @@ export function PokemonCard({
 	const handleRotationChange = React.useCallback(
 		(rx: number, ry: number) => {
 			'worklet';
-			runOnJS(setGradientCenter)({
-				x: WIDTH / 2 + (WIDTH / 2) * (ry / MAX_ANGLE),
-				y: HEIGHT / 2 + (HEIGHT / 2) * (rx / MAX_ANGLE),
-			});
+			
+			// Calculate movement constraints based on image dimensions and display mode
+			const calculateGradientCenter = () => {
+				const centerX = WIDTH / 2;
+				const centerY = HEIGHT / 2;
+				
+				// Normalize rotation values (-1 to 1)
+				const normalizedRx = rx / MAX_ANGLE;
+				const normalizedRy = ry / MAX_ANGLE;
+				
+				if (useCircularMask) {
+					// For circular mode, constrain movement to stay within the circle
+					const circleRadius = Math.min(WIDTH, HEIGHT) / 2;
+					
+					// Calculate movement range as a percentage of the circle radius
+					const movementRange = circleRadius * 0.6; // 60% of radius for smooth movement
+					
+					// Apply aspect ratio correction for non-square images
+					const aspectRatio = WIDTH / HEIGHT;
+					const xMovement = movementRange * normalizedRy * (aspectRatio > 1 ? 1 : aspectRatio);
+					const yMovement = movementRange * normalizedRx * (aspectRatio < 1 ? 1 : 1/aspectRatio);
+					
+					return {
+						x: centerX + xMovement,
+						y: centerY + yMovement,
+					};
+				} else {
+					// For rectangular mode, use proportional movement based on dimensions
+					const aspectRatio = WIDTH / HEIGHT;
+					
+					// Calculate movement range as a percentage of each dimension
+					const xMovementRange = WIDTH * 0.35; // 35% of width
+					const yMovementRange = HEIGHT * 0.35; // 35% of height
+					
+					// Apply aspect ratio weighting to make movement feel natural
+					const aspectWeight = Math.min(aspectRatio, 1/aspectRatio);
+					const xMovement = xMovementRange * normalizedRy * (1 + aspectWeight * 0.3);
+					const yMovement = yMovementRange * normalizedRx * (1 + aspectWeight * 0.3);
+					
+					// Ensure gradient center stays within image bounds with padding
+					const padding = Math.min(WIDTH, HEIGHT) * 0.1;
+					const clampedX = Math.max(padding, Math.min(WIDTH - padding, centerX + xMovement));
+					const clampedY = Math.max(padding, Math.min(HEIGHT - padding, centerY + yMovement));
+					
+					return {
+						x: clampedX,
+						y: clampedY,
+					};
+				}
+			};
+			
+			runOnJS(setGradientCenter)(calculateGradientCenter());
 		},
-		[HEIGHT, WIDTH, MAX_ANGLE],
+		[HEIGHT, WIDTH, MAX_ANGLE, useCircularMask],
 	);
 
 	// Update gradient center when dimensions change

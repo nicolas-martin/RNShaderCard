@@ -20,6 +20,38 @@ export function ShinyShaderComponent({
 	centerY = height / 2,
 	circleRadius = Math.min(width, height) / 2,
 }: ShinyShaderComponentProps) {
+	// Calculate appropriate gradient radius based on dimensions and mode
+	const calculateGradientRadius = () => {
+		if (isCircular) {
+			// For circular mode, use a radius that's slightly larger than the circle
+			// to ensure the gradient covers the entire circle area
+			return circleRadius * 1.5;
+		} else {
+			// For rectangular mode, calculate the diagonal distance from the gradient center
+			// to the farthest corner to ensure the gradient covers the entire rectangle
+			const corners = [
+				{ x: 0, y: 0 },
+				{ x: width, y: 0 },
+				{ x: 0, y: height },
+				{ x: width, y: height }
+			];
+			
+			const maxDistance = Math.max(
+				...corners.map(corner => 
+					Math.sqrt(
+						Math.pow(corner.x - gradientCenter.x, 2) + 
+						Math.pow(corner.y - gradientCenter.y, 2)
+					)
+				)
+			);
+			
+			// Add a small buffer to ensure complete coverage
+			return maxDistance * 1.1;
+		}
+	};
+
+	const gradientRadius = calculateGradientRadius();
+
 	return (
 		<Group blendMode={'overlay'}>
 			{isCircular ? (
@@ -42,7 +74,7 @@ export function ShinyShaderComponent({
 						color="white">
 						<RadialGradient
 							c={vec(gradientCenter.x, gradientCenter.y)}
-							r={Math.max(width, height)}
+							r={gradientRadius}
 							colors={[
 								'hsla(0, 0%, 100%, 0.8)',
 								'hsla(0, 0%, 100%, 0.65)',
@@ -68,7 +100,7 @@ export function ShinyShaderComponent({
 					<RoundedRect x={0} y={0} width={width} height={height} r={12} color="white">
 						<RadialGradient
 							c={vec(gradientCenter.x, gradientCenter.y)}
-							r={Math.max(width, height)}
+							r={gradientRadius}
 							colors={[
 								'hsla(0, 0%, 100%, 0.8)',
 								'hsla(0, 0%, 100%, 0.65)',

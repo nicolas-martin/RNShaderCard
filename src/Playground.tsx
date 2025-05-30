@@ -286,66 +286,99 @@ function Playground(): React.JSX.Element {
 						Combine different components, effects, and display modes
 					</Text>
 					
-					<CustomDropdown
-						title="Base Component"
-						options={baseComponentOptions}
-						selectedValue={baseComponent}
-						onSelect={(value) => setBaseComponent(value as BaseComponent)}
-						isDarkMode={isDarkMode}
-						textColor={textColor}
-					/>
+					{/* First Row */}
+					<View style={styles.dropdownRow}>
+						<View style={styles.dropdownHalf}>
+							<CustomDropdown
+								title="Base Component"
+								options={baseComponentOptions}
+								selectedValue={baseComponent}
+								onSelect={(value) => setBaseComponent(value as BaseComponent)}
+								isDarkMode={isDarkMode}
+								textColor={textColor}
+							/>
+						</View>
 
-					{baseComponent === 'pokemon-card' && (
-						<>
-							<CustomDropdown
-								title="Image Selection"
-								options={imageOptions}
-								selectedValue={selectedImage}
-								onSelect={(value) => setSelectedImage(value as ImageOption)}
-								isDarkMode={isDarkMode}
-								textColor={textColor}
-							/>
+						{baseComponent === 'pokemon-card' && (
+							<View style={styles.dropdownHalf}>
+								<CustomDropdown
+									title="Image Selection"
+									options={imageOptions}
+									selectedValue={selectedImage}
+									onSelect={(value) => setSelectedImage(value as ImageOption)}
+									isDarkMode={isDarkMode}
+									textColor={textColor}
+								/>
+							</View>
+						)}
 
-							<CustomDropdown
-								title="Shader Effect"
-								options={shaderEffectOptions}
-								selectedValue={shaderEffect}
-								onSelect={(value) => setShaderEffect(value as ShaderEffect)}
-								isDarkMode={isDarkMode}
-								textColor={textColor}
-							/>
-							
-							<CustomDropdown
-								title="Display Mode"
-								options={displayModeOptions}
-								selectedValue={displayMode}
-								onSelect={(value) => setDisplayMode(value as DisplayMode)}
-								isDarkMode={isDarkMode}
-								textColor={textColor}
-							/>
-						</>
-					)}
+						{baseComponent === 'shader-canvas' && (
+							<View style={styles.dropdownHalf}>
+								<CustomDropdown
+									title="Shader Type"
+									options={shaderTypeOptions}
+									selectedValue={shaderType}
+									onSelect={(value) => setShaderType(value as ShaderType)}
+									isDarkMode={isDarkMode}
+									textColor={textColor}
+								/>
+							</View>
+						)}
 
-					{baseComponent === 'shader-canvas' && (
-						<>
-							<CustomDropdown
-								title="Shader Type"
-								options={shaderTypeOptions}
-								selectedValue={shaderType}
-								onSelect={(value) => setShaderType(value as ShaderType)}
-								isDarkMode={isDarkMode}
-								textColor={textColor}
-							/>
-							
-							<CustomDropdown
-								title="Display Mode"
-								options={displayModeOptions}
-								selectedValue={displayMode}
-								onSelect={(value) => setDisplayMode(value as DisplayMode)}
-								isDarkMode={isDarkMode}
-								textColor={textColor}
-							/>
-						</>
+						{baseComponent === 'luffy-canvas' && (
+							<View style={styles.dropdownHalf}>
+								{/* Empty placeholder for luffy canvas */}
+							</View>
+						)}
+					</View>
+
+					{/* Second Row - Only show for pokemon-card and shader-canvas */}
+					{(baseComponent === 'pokemon-card' || baseComponent === 'shader-canvas') && (
+						<View style={styles.dropdownRow}>
+							{baseComponent === 'pokemon-card' && (
+								<>
+									<View style={styles.dropdownHalf}>
+										<CustomDropdown
+											title="Shader Effect"
+											options={shaderEffectOptions}
+											selectedValue={shaderEffect}
+											onSelect={(value) => setShaderEffect(value as ShaderEffect)}
+											isDarkMode={isDarkMode}
+											textColor={textColor}
+										/>
+									</View>
+									
+									<View style={styles.dropdownHalf}>
+										<CustomDropdown
+											title="Display Mode"
+											options={displayModeOptions}
+											selectedValue={displayMode}
+											onSelect={(value) => setDisplayMode(value as DisplayMode)}
+											isDarkMode={isDarkMode}
+											textColor={textColor}
+										/>
+									</View>
+								</>
+							)}
+
+							{baseComponent === 'shader-canvas' && (
+								<>
+									<View style={styles.dropdownHalf}>
+										<CustomDropdown
+											title="Display Mode"
+											options={displayModeOptions}
+											selectedValue={displayMode}
+											onSelect={(value) => setDisplayMode(value as DisplayMode)}
+											isDarkMode={isDarkMode}
+											textColor={textColor}
+										/>
+									</View>
+									<View style={styles.dropdownHalf}>
+										{/* Empty placeholder for shader canvas second option */}
+									</View>
+								</>
+							)}
+						</View>
 					)}
 				</View>
 
@@ -363,42 +396,44 @@ function Playground(): React.JSX.Element {
 
 const styles = StyleSheet.create({
 	controlsContainer: {
-		padding: 16,
-		paddingBottom: 8,
+		padding: 12,
+		paddingBottom: 6,
 	},
 	mainTitle: {
-		fontSize: 20,
+		fontSize: 18,
 		fontWeight: 'bold',
-		marginBottom: 4,
+		marginBottom: 3,
 	},
 	subtitle: {
-		fontSize: 14,
+		fontSize: 13,
 		opacity: 0.7,
-		marginBottom: 20,
+		marginBottom: 12,
 	},
 	dropdownWrapper: {
-		marginBottom: 16,
+		marginBottom: 10,
+		marginHorizontal: 4,
 	},
 	dropdownTitle: {
-		fontSize: 16,
+		fontSize: 14,
 		fontWeight: '600',
-		marginBottom: 8,
+		marginBottom: 4,
 	},
 	dropdownButton: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		padding: 16,
-		borderRadius: 8,
+		padding: 10,
+		borderRadius: 6,
 		borderWidth: 1,
+		minHeight: 40,
 	},
 	dropdownButtonText: {
-		fontSize: 16,
+		fontSize: 14,
 		flex: 1,
 	},
 	dropdownArrow: {
-		fontSize: 12,
-		marginLeft: 8,
+		fontSize: 10,
+		marginLeft: 6,
 	},
 	modalOverlay: {
 		flex: 1,
@@ -409,8 +444,8 @@ const styles = StyleSheet.create({
 	},
 	dropdownModal: {
 		width: '100%',
-		maxHeight: '80%',
-		borderRadius: 12,
+		maxHeight: '70%',
+		borderRadius: 10,
 		borderWidth: 1,
 		overflow: 'hidden',
 	},
@@ -418,39 +453,48 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		padding: 16,
+		padding: 12,
 		borderBottomWidth: 1,
 		borderBottomColor: '#eee',
 	},
 	modalTitle: {
-		fontSize: 18,
+		fontSize: 16,
 		fontWeight: 'bold',
 	},
 	closeButton: {
 		padding: 4,
 	},
 	closeButtonText: {
-		fontSize: 18,
+		fontSize: 16,
 		fontWeight: 'bold',
 	},
 	optionsList: {
-		maxHeight: 400,
+		maxHeight: 300,
 	},
 	dropdownItem: {
-		padding: 16,
+		padding: 12,
 		borderBottomWidth: 1,
 		borderBottomColor: '#eee',
+		minHeight: 44,
+		justifyContent: 'center',
 	},
 	dropdownItemText: {
-		fontSize: 16,
+		fontSize: 14,
 	},
 	debugContainer: {
-		padding: 16,
-		marginBottom: 16,
+		padding: 12,
+		marginBottom: 8,
 	},
 	debugText: {
-		fontSize: 14,
+		fontSize: 12,
 		opacity: 0.7,
+	},
+	dropdownRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	dropdownHalf: {
+		flex: 1,
 	},
 });
 
